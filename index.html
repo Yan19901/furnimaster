@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ФурниМастер - Мастерская швейной фурнитуры</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <!-- Навигация -->
+    <nav class="navbar">
+      <div class="container">
+        <div class="nav-brand">
+          <img src="images/logo.svg" alt="ФурниМастер" class="nav-logo" />
+          <span>ФурниМастер</span>
+        </div>
+        <div class="nav-menu">
+          <a href="#home" class="nav-link">Главная</a>
+          <a href="#services" class="nav-link">Услуги</a>
+          <a href="#about" class="nav-link">О нас</a>
+          <a href="#contact" class="nav-link">Контакты</a>
+        </div>
+        <div class="nav-toggle">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Главная секция -->
+    <section id="home" class="hero">
+      <div class="hero-background">
+        <div class="hero-overlay"></div>
+      </div>
+      <div class="container">
+        <div class="hero-content">
+          <div class="hero-logo">
+            <img
+              src="images/logo.svg"
+              alt="ФурниМастер Логотип"
+              class="animated-logo"
+            />
+          </div>
+          <h1 class="hero-title">
+            <span class="brand-name">ФурниМастер</span>
+            <span class="tagline">Каждая деталь важна</span>
+          </h1>
+          <p class="hero-description">
+            Профессиональная мастерская с 15-летним опытом. Предлагаем
+            качественные услуги по работе со швейной фурнитурой, ремонту и
+            доработке одежды.
+          </p>
+          <div class="hero-buttons">
+            <a href="#services" class="btn btn-primary">
+              <i class="fas fa-wrench"></i>
+              Наши услуги
+            </a>
+            <a href="#contact" class="btn btn-secondary">
+              <i class="fas fa-phone"></i>
+              Связаться с нами
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="scroll-indicator">
+        <i class="fas fa-chevron-down"></i>
+      </div>
+    </section>
+
+    <!-- Услуги -->
+    <section id="services" class="services">
+      <div class="container">
+        <div class="section-header">
+          <h2>Наши услуги</h2>
+          <p>Профессиональные услуги для швейной индустрии</p>
+        </div>
+        <div class="services-grid">
+          <div class="service-card">
+            <div class="service-image">
+              <img
+                src="images/services/button-covering.jpg"
+                alt="Обтяжка пуговиц"
+                class="service-photo"
+              />
+            </div>
+            <h3>Обтяжка пуговиц</h3>
+            <p>
+              Обтяжка пуговиц всех видов и размеров качественными материалами
+            </p>
+          </div>
+          <div class="service-card">
+            <div class="service-image">
+              <img
+                src="images/services/hardware-installation.jpg"
+                alt="Установка фурнитуры"
+                class="service-photo"
+              />
+            </div>
+            <h3>Установка фурнитуры</h3>
+            <p>
+              Установка люверсов, кнопок и заклепок всех видов с
+              профессиональным качеством
+            </p>
+          </div>
+          <div class="service-card">
+            <div class="service-image">
+              <img
+                src="images/services/buttonhole-punching.jpg"
+                alt="Пробивка петель"
+                class="service-photo"
+              />
+            </div>
+            <h3>Пробивка петель</h3>
+            <p>
+              Пробивка петель всех видов с точным исполнением и аккуратной
+              обработкой
+            </p>
+          </div>
+          <div class="service-card">
+            <div class="service-image">
+              <img
+                src="images/services/zipper-installation.jpg"
+                alt="Установка молний"
+                class="service-photo"
+              />
+            </div>
+            <h3>Установка молний</h3>
+            <p>Профессиональная установка молний различных типов и размеров</p>
+          </div>
+          <div class="service-card">
+            <div class="service-image">
+              <img
+                src="images/services/clothing-repair.jpg"
+                alt="Индивидуальный ремонт одежды"
+                class="service-photo"
+              />
+            </div>
+            <h3>Индивидуальный ремонт одежды</h3>
+            <p>
+              Качественный ремонт одежды любой сложности с учетом индивидуальных
+              требований
+            </p>
+          </div>
+          <div class="service-card">
+            <div class="service-image">
+              <img
+                src="images/services/batch-processing.jpg"
+                alt="Доработка партий одежды"
+                class="service-photo"
+              />
+            </div>
+            <h3>Доработка партий одежды</h3>
+            <p>
+              Перешив лейблов, изменение отдельных элементов и другие доработки
+              партий одежды
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- О нас -->
+    <section id="about" class="about">
+      <div class="container">
+        <div class="about-content">
+          <div class="about-text">
+            <div class="section-header">
+              <h2>О мастерской</h2>
+            </div>
+            <div class="about-description">
+              <p>
+                Более 15 лет мы специализируемся на производстве и ремонте
+                швейной фурнитуры. За это время нашими клиентами стали сотни
+                швейных предприятий, ателье и частных мастеров.
+              </p>
+
+              <p>
+                Наша команда состоит из опытных мастеров, которые знают все
+                тонкости работы с различными видами фурнитуры. Мы используем
+                только качественные материалы и современное оборудование.
+              </p>
+            </div>
+            <div class="about-stats">
+              <div class="stat-item">
+                <div class="stat-number">15+</div>
+                <div class="stat-label">лет опыта</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-number">2000+</div>
+                <div class="stat-label">довольных клиентов</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-number">5000+</div>
+                <div class="stat-label">выполненных заказов</div>
+              </div>
+            </div>
+          </div>
+          <div class="about-image">
+            <img
+              src="images/about/workshop.png"
+              alt="Наша мастерская"
+              class="about-workshop-photo"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Контакты -->
+    <section id="contact" class="contact">
+      <div class="container">
+        <div class="section-header">
+          <h2>Свяжитесь с нами</h2>
+          <p>Готовы ответить на ваши вопросы и принять заказ</p>
+        </div>
+        <div class="contact-content">
+          <div class="contact-info">
+            <div class="contact-item">
+              <div class="contact-icon">
+                <i class="fas fa-map-marker-alt"></i>
+              </div>
+              <div class="contact-details">
+                <h3>Адрес</h3>
+                <p>
+                  г. Москва, ул. Енисейская, д.1с2<br />метро "Свиблво",
+                  "Ростокино"
+                </p>
+              </div>
+            </div>
+            <div class="contact-item">
+              <div class="contact-icon">
+                <i class="fas fa-phone"></i>
+              </div>
+              <div class="contact-details">
+                <h3>Телефон</h3>
+                <p>+7 (916) 882-42-56<br />+7 (968) 758-69-16</p>
+              </div>
+            </div>
+            <div class="contact-item">
+              <div class="contact-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="contact-details">
+                <h3>Email</h3>
+                <p>info@furnimaster.ru</p>
+              </div>
+            </div>
+            <div class="contact-item">
+              <div class="contact-icon">
+                <i class="fas fa-clock"></i>
+              </div>
+              <div class="contact-details">
+                <h3>Режим работы</h3>
+                <p>Пн-Пт: 9:00 - 18:00</p>
+              </div>
+            </div>
+          </div>
+          <div class="contact-form">
+            <form id="contactForm" action="send-email.php" method="POST">
+              <div class="form-group">
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  placeholder="Ваше имя"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <input
+                  type="tel"
+                  id="phone"
+                  name="phone"
+                  placeholder="Телефон"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  placeholder="Email (необязательно)"
+                />
+              </div>
+              <div class="form-group">
+                <textarea
+                  id="message"
+                  name="message"
+                  placeholder="Опишите ваш запрос..."
+                  rows="5"
+                  required
+                ></textarea>
+              </div>
+              <button type="submit" class="btn btn-primary">
+                <i class="fas fa-paper-plane"></i>
+                Отправить сообщение
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Футер -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-section">
+            <div class="footer-brand">
+              <i class="fas fa-scissors"></i>
+              <span>ФурниМастер</span>
+            </div>
+            <p>Каждая деталь важна</p>
+            <div class="social-links">
+              <a href="#"><i class="fab fa-vk"></i></a>
+              <a href="#"><i class="fab fa-telegram"></i></a>
+              <a href="#"><i class="fab fa-whatsapp"></i></a>
+            </div>
+          </div>
+          <div class="footer-section">
+            <h3>Услуги</h3>
+            <ul>
+              <li><a href="#services">Обтяжка пуговиц</a></li>
+              <li><a href="#services">Установка фурнитуры</a></li>
+              <li><a href="#services">Пробивка петель</a></li>
+              <li><a href="#services">Установка молний</a></li>
+              <li><a href="#services">Ремонт одежды</a></li>
+              <li><a href="#services">Доработка партий</a></li>
+            </ul>
+          </div>
+          <div class="footer-section">
+            <h3>Контакты</h3>
+            <ul>
+              <li>г. Москва, ул. Енисейская, д. 1с2</li>
+              <li>+7 (916) 882-42-56</li>
+              <li>info@furnimaster.ru</li>
+              <li>Пн-Пт: 9:00 - 18:00</li>
+            </ul>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>&copy; 2024 ФурниМастер. Все права защищены.</p>
+        </div>
+      </div>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
