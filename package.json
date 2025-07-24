@@ -1,0 +1,12 @@
+{
+  "devDependencies": {
+    "basic-ftp": "^5.0.5",
+    "dotenv": "^17.2.0"
+  },
+  "scripts": {
+    "build": "your-build-command-here",
+    "deploy": "node deploy_ftp.js",
+    "build-deploy": "npm run build && npm run deploy",
+    "deploy-only": "node deploy_ftp.js"
+  }
+}
