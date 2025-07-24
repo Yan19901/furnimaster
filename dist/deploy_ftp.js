@@ -1,10 +1,58 @@
 import ftp from 'basic-ftp';
 import fs from 'fs';
 import path from 'path';
+import { execSync } from 'child_process';
 import dotenv from 'dotenv';
 
 // Загружаем переменные из .env
 dotenv.config();
+
+async function syncDistFolder() {
+    console.log('📦 Syncing dist folder with latest changes...');
+    
+    try {
+        // Копируем актуальные файлы в dist
+        const filesToSync = [
+            { src: 'index.html', dest: 'dist/index.html' },
+            { src: 'styles.css', dest: 'dist/styles.css' },
+            { src: 'script.js', dest: 'dist/script.js' },
+            { src: 'send-email.php', dest: 'dist/send-email.php' }
+        ];
+        
+        for (const file of filesToSync) {
+            if (fs.existsSync(file.src)) {
+                fs.copyFileSync(file.src, file.dest);
+                console.log(`✅ Synced: ${file.src} → ${file.dest}`);
+            }
+        }
+        
+        // Копируем папки если они существуют
+        const foldersToSync = ['fonts', 'images'];
+        for (const folder of foldersToSync) {
+            if (fs.existsSync(folder)) {
+                const destFolder = `dist/${folder}`;
+                // Создаем папку если не существует
+                if (!fs.existsSync(destFolder)) {
+                    fs.mkdirSync(destFolder, { recursive: true });
+                }
+                
+                // Копируем содержимое
+                try {
+                    execSync(`xcopy "${folder}" "${destFolder}" /E /I /Y`, { stdio: 'pipe' });
+                    console.log(`✅ Synced folder: ${folder}`);
+                } catch (error) {
+                    console.log(`ℹ️  Folder ${folder} sync completed with warnings`);
+                }
+            }
+        }
+        
+        console.log('✅ Dist folder synchronized successfully!');
+        
+    } catch (error) {
+        console.error('❌ Error syncing dist folder:', error.message);
+        throw error;
+    }
+}
 
 async function deployToFTP() {
     const client = new ftp.Client();
@@ -13,6 +61,9 @@ async function deployToFTP() {
     client.ftp.verbose = true;
     
     try {
+        // Сначала синхронизируем dist папку
+        await syncDistFolder();
+        
         console.log('🚀 Starting FTP deployment...');
         
         // Подключение к FTP серверу
@@ -56,4 +107,7 @@ async function deployToFTP() {
 }
 
 // Запускаем деплой
-deployToFTP();
+deployToFTP().catch(error => {
+    console.error('❌ Deployment process failed:', error.message);
+    process.exit(1);
+});
