@@ -4,7 +4,15 @@
       "Bash(mkdir:*)",
       "Bash(git config:*)",
       "Bash(git init:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(gh repo create:*)",
+      "Bash(cp:*)",
+      "Bash(true)",
+      "Bash(npm install:*)",
+      "Bash(npm run deploy:*)",
+      "Bash(git push:*)",
+      "Bash(rm:*)"
     ],
     "deny": []
   }

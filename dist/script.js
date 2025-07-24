@@ -1,16 +1,3 @@
-// Эффект печатания для слогана
-document.addEventListener('DOMContentLoaded', function() {
-    const typewriterElement = document.querySelector('.typewriter');
-    if (typewriterElement) {
-        const text = typewriterElement.getAttribute('data-text');
-        if (text) {
-            setTimeout(() => {
-                typewriterElement.textContent = text;
-            }, 1500);
-        }
-    }
-});
-
 // Плавная прокрутка для навигации
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
