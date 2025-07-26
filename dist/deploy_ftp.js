@@ -11,12 +11,18 @@ async function syncDistFolder() {
     console.log('📦 Syncing dist folder with latest changes...');
     
     try {
+        // Определяем базовую директорию и целевую папку dist
+        const currentDir = process.cwd();
+        const isInDist = currentDir.endsWith('dist');
+        const baseDir = isInDist ? path.join(currentDir, '..') : currentDir;
+        const distDir = path.join(baseDir, 'dist');
+        
         // Копируем актуальные файлы в dist
         const filesToSync = [
-            { src: 'index.html', dest: 'dist/index.html' },
-            { src: 'styles.css', dest: 'dist/styles.css' },
-            { src: 'script.js', dest: 'dist/script.js' },
-            { src: 'send-email.php', dest: 'dist/send-email.php' }
+            { src: path.join(baseDir, 'index.html'), dest: path.join(distDir, 'index.html') },
+            { src: path.join(baseDir, 'styles.css'), dest: path.join(distDir, 'styles.css') },
+            { src: path.join(baseDir, 'script.js'), dest: path.join(distDir, 'script.js') },
+            { src: path.join(baseDir, 'send-email.php'), dest: path.join(distDir, 'send-email.php') }
         ];
         
         for (const file of filesToSync) {
@@ -29,8 +35,10 @@ async function syncDistFolder() {
         // Копируем папки если они существуют
         const foldersToSync = ['fonts', 'images'];
         for (const folder of foldersToSync) {
-            if (fs.existsSync(folder)) {
-                const destFolder = `dist/${folder}`;
+            const srcFolder = path.join(baseDir, folder);
+            const destFolder = path.join(distDir, folder);
+            
+            if (fs.existsSync(srcFolder)) {
                 // Создаем папку если не существует
                 if (!fs.existsSync(destFolder)) {
                     fs.mkdirSync(destFolder, { recursive: true });
@@ -38,7 +46,7 @@ async function syncDistFolder() {
                 
                 // Копируем содержимое
                 try {
-                    execSync(`xcopy "${folder}" "${destFolder}" /E /I /Y`, { stdio: 'pipe' });
+                    execSync(`xcopy "${srcFolder}" "${destFolder}" /E /I /Y`, { stdio: 'pipe' });
                     console.log(`✅ Synced folder: ${folder}`);
                 } catch (error) {
                     console.log(`ℹ️  Folder ${folder} sync completed with warnings`);
