@@ -6,6 +6,64 @@ import dotenv from 'dotenv';
 // Загружаем переменные из .env
 dotenv.config();
 
+async function copyFilesToDist() {
+    console.log('📦 Copying files to dist directory...');
+    
+    const distDir = './dist';
+    
+    // Создаем dist директорию если не существует
+    if (!fs.existsSync(distDir)) {
+        fs.mkdirSync(distDir, { recursive: true });
+    }
+    
+    // Список основных файлов для копирования
+    const mainFiles = [
+        'index.html',
+        'styles.css', 
+        'script.js',
+        'send-email.php'
+    ];
+    
+    // Копируем основные файлы
+    for (const file of mainFiles) {
+        if (fs.existsSync(file)) {
+            fs.copyFileSync(file, path.join(distDir, file));
+            console.log(`✅ Copied ${file}`);
+        }
+    }
+    
+    // Копируем папки (fonts, images, icons)
+    const directories = ['fonts', 'images', 'icons'];
+    
+    for (const dir of directories) {
+        if (fs.existsSync(dir)) {
+            copyDirRecursive(dir, path.join(distDir, dir));
+            console.log(`✅ Copied directory ${dir}`);
+        }
+    }
+    
+    console.log('✅ All files copied to dist successfully!');
+}
+
+function copyDirRecursive(src, dest) {
+    if (!fs.existsSync(dest)) {
+        fs.mkdirSync(dest, { recursive: true });
+    }
+    
+    const entries = fs.readdirSync(src, { withFileTypes: true });
+    
+    for (const entry of entries) {
+        const srcPath = path.join(src, entry.name);
+        const destPath = path.join(dest, entry.name);
+        
+        if (entry.isDirectory()) {
+            copyDirRecursive(srcPath, destPath);
+        } else {
+            fs.copyFileSync(srcPath, destPath);
+        }
+    }
+}
+
 async function deployToFTP() {
     const client = new ftp.Client();
     
@@ -14,6 +72,9 @@ async function deployToFTP() {
     
     try {
         console.log('🚀 Starting FTP deployment...');
+        
+        // Сначала копируем актуальные файлы в dist
+        await copyFilesToDist();
         
         // Подключение к FTP серверу
         await client.access({
