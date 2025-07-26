@@ -4,6 +4,58 @@ import path from 'path';
 import { execSync } from 'child_process';
 import dotenv from 'dotenv';
 
+// Файлы и папки, которые НЕ должны попадать на хостинг
+const EXCLUDED_FILES = [
+    'deploy_ftp.js',
+    '.claude',
+    'CLAUDE.md',
+    'check-memory.cjs',
+    'package.json',
+    'package-lock.json',
+    '.env',
+    '.git',
+    '.gitignore',
+    'node_modules',
+    '.vscode',
+    '.DS_Store',
+    'Thumbs.db'
+];
+
+// Функция для проверки, должен ли файл быть исключен
+function shouldExclude(filePath) {
+    const fileName = path.basename(filePath);
+    return EXCLUDED_FILES.some(excluded => 
+        fileName === excluded || 
+        fileName.startsWith('.') && excluded.startsWith('.') ||
+        filePath.includes(excluded)
+    );
+}
+
+// Функция для загрузки файлов с фильтрацией
+async function uploadFilteredFiles(client, localPath, remotePath) {
+    const files = fs.readdirSync(localPath, { withFileTypes: true });
+    
+    for (const file of files) {
+        const localFilePath = path.join(localPath, file.name);
+        const remoteFilePath = path.posix.join(remotePath, file.name);
+        
+        // Проверяем, нужно ли исключить файл
+        if (shouldExclude(localFilePath)) {
+            console.log(`⏭️  Skipping: ${file.name} (excluded)`);
+            continue;
+        }
+        
+        if (file.isDirectory()) {
+            console.log(`📁 Creating directory: ${file.name}`);
+            await client.ensureDir(remoteFilePath);
+            await uploadFilteredFiles(client, localFilePath, remoteFilePath);
+        } else {
+            console.log(`📄 Uploading: ${file.name}`);
+            await client.uploadFrom(localFilePath, remoteFilePath);
+        }
+    }
+}
+
 // Загружаем переменные из .env
 dotenv.config();
 
@@ -100,8 +152,33 @@ async function deployToFTP() {
         // Переходим в удаленную директорию
         await client.ensureDir(remotePath);
         
-        // Загружаем файлы
-        await client.uploadFromDir(localPath, remotePath);
+        // Очищаем удаленную директорию от старых файлов
+        console.log('🧹 Clearing remote directory...');
+        try {
+            const list = await client.list();
+            for (const item of list) {
+                if (item.name !== '.' && item.name !== '..' && item.name !== 'cgi-bin') {
+                    try {
+                        if (item.type === 2) { // directory
+                            console.log(`🗂️  Removing directory: ${item.name}`);
+                            await client.removeDir(item.name);
+                        } else { // file
+                            console.log(`🗃️  Removing file: ${item.name}`);
+                            await client.remove(item.name);
+                        }
+                    } catch (err) {
+                        console.log(`⚠️  Could not remove ${item.name}:`, err.message);
+                    }
+                }
+            }
+            console.log('✅ Remote directory cleared');
+        } catch (error) {
+            console.log('ℹ️  Could not clear directory:', error.message);
+        }
+
+        // Загружаем файлы с фильтрацией
+        console.log('📤 Uploading files with filtering...');
+        await uploadFilteredFiles(client, localPath, remotePath);
         
         console.log('🎉 Deployment completed successfully!');
         console.log(`🌐 Your site should be available at: ${process.env.SITE_URL || 'your-website.com'}`);

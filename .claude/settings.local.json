@@ -18,7 +18,10 @@
       "Bash(cat:*)",
       "Bash(node:*)",
       "mcp__filesystem__move_file",
-      "Bash(git fetch:*)"
+      "Bash(git fetch:*)",
+      "mcp__memory__add_observations",
+      "mcp__puppeteer__puppeteer_navigate",
+      "mcp__puppeteer__puppeteer_evaluate"
     ],
     "deny": []
   }
