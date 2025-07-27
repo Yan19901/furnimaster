@@ -1,15 +1,53 @@
 import ftp from 'basic-ftp';
 import fs from 'fs';
 import path from 'path';
+import crypto from 'crypto';
 import dotenv from 'dotenv';
 
 // Загружаем переменные из .env
 dotenv.config();
 
+// Создаем кеш файлов для отслеживания изменений
+const CACHE_FILE = '.deploy-cache.json';
+
+function getFileHash(filePath) {
+    const fileBuffer = fs.readFileSync(filePath);
+    const hashSum = crypto.createHash('md5');
+    hashSum.update(fileBuffer);
+    return hashSum.digest('hex');
+}
+
+function loadCache() {
+    try {
+        if (fs.existsSync(CACHE_FILE)) {
+            return JSON.parse(fs.readFileSync(CACHE_FILE, 'utf8'));
+        }
+    } catch (error) {
+        console.log('⚠️ Could not load cache file, will rebuild all files');
+    }
+    return {};
+}
+
+function saveCache(cache) {
+    fs.writeFileSync(CACHE_FILE, JSON.stringify(cache, null, 2));
+}
+
+function isFileChanged(filePath, cache) {
+    if (!fs.existsSync(filePath)) return false;
+    
+    const currentHash = getFileHash(filePath);
+    const cachedHash = cache[filePath];
+    
+    return currentHash !== cachedHash;
+}
+
 async function copyFilesToDist() {
-    console.log('📦 Copying files to dist directory...');
+    console.log('📦 Checking for file changes and copying to dist directory...');
     
     const distDir = './dist';
+    const cache = loadCache();
+    const newCache = {};
+    let copiedCount = 0;
     
     // Создаем dist директорию если не существует
     if (!fs.existsSync(distDir)) {
@@ -24,25 +62,76 @@ async function copyFilesToDist() {
         'send-email.php'
     ];
     
-    // Копируем основные файлы
+    // Копируем основные файлы только если они изменились
     for (const file of mainFiles) {
         if (fs.existsSync(file)) {
-            fs.copyFileSync(file, path.join(distDir, file));
-            console.log(`✅ Copied ${file}`);
+            const currentHash = getFileHash(file);
+            newCache[file] = currentHash;
+            
+            if (isFileChanged(file, cache)) {
+                fs.copyFileSync(file, path.join(distDir, file));
+                console.log(`✅ Copied ${file} (changed)`);
+                copiedCount++;
+            } else {
+                console.log(`⏭️ Skipped ${file} (unchanged)`);
+            }
         }
     }
     
-    // Копируем папки (fonts, images, icons)
+    // Копируем папки (fonts, images, icons) с проверкой изменений
     const directories = ['fonts', 'images', 'icons'];
     
     for (const dir of directories) {
         if (fs.existsSync(dir)) {
-            copyDirRecursive(dir, path.join(distDir, dir));
-            console.log(`✅ Copied directory ${dir}`);
+            const copied = copyDirRecursiveWithCache(dir, path.join(distDir, dir), cache, newCache);
+            if (copied > 0) {
+                console.log(`✅ Copied directory ${dir} (${copied} files changed)`);
+                copiedCount += copied;
+            } else {
+                console.log(`⏭️ Skipped directory ${dir} (unchanged)`);
+            }
         }
     }
     
-    console.log('✅ All files copied to dist successfully!');
+    // Сохраняем кеш
+    saveCache(newCache);
+    
+    if (copiedCount > 0) {
+        console.log(`✅ ${copiedCount} files copied to dist successfully!`);
+    } else {
+        console.log('ℹ️ No files changed, dist is up to date');
+    }
+    
+    return copiedCount;
+}
+
+function copyDirRecursiveWithCache(src, dest, cache, newCache) {
+    if (!fs.existsSync(dest)) {
+        fs.mkdirSync(dest, { recursive: true });
+    }
+    
+    const entries = fs.readdirSync(src, { withFileTypes: true });
+    let copiedCount = 0;
+    
+    for (const entry of entries) {
+        const srcPath = path.join(src, entry.name);
+        const destPath = path.join(dest, entry.name);
+        const relativePath = path.relative('.', srcPath);
+        
+        if (entry.isDirectory()) {
+            copiedCount += copyDirRecursiveWithCache(srcPath, destPath, cache, newCache);
+        } else {
+            const currentHash = getFileHash(srcPath);
+            newCache[relativePath] = currentHash;
+            
+            if (isFileChanged(relativePath, cache)) {
+                fs.copyFileSync(srcPath, destPath);
+                copiedCount++;
+            }
+        }
+    }
+    
+    return copiedCount;
 }
 
 function copyDirRecursive(src, dest) {
@@ -74,7 +163,13 @@ async function deployToFTP() {
         console.log('🚀 Starting FTP deployment...');
         
         // Сначала копируем актуальные файлы в dist
-        await copyFilesToDist();
+        const changedFiles = await copyFilesToDist();
+        
+        // Если ничего не изменилось, можно пропустить деплой
+        if (changedFiles === 0) {
+            console.log('ℹ️ No changes detected, skipping FTP upload');
+            return;
+        }
         
         // Подключение к FTP серверу
         await client.access({

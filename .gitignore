@@ -75,3 +75,6 @@ logs
 # Temporary files
 tmp/
 temp/
+
+# Deploy cache
+.deploy-cache.json
